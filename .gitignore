@@ -1,0 +1,8 @@
+node_modules
+dist
+bower_components
+docs
+.tmp
+.publish/
+.old
+backup

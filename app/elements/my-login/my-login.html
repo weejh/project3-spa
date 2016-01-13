@@ -1,0 +1,102 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="http://cdn.auth0.com/js/lock-8.1.3.min.js"></script>
+<dom-module id="my-login">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      /*paper-button:hover {
+        background: lime;
+      }*/
+      paper-button {
+      	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #7892c2), color-stop(1, #476e9e));
+      	background:-moz-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+      	background:-webkit-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+      	background:-o-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+      	background:-ms-linear-gradient(top, #7892c2 5%, #476e9e 100%);
+      	background:linear-gradient(to bottom, #7892c2 5%, #476e9e 100%);
+      	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#7892c2', endColorstr='#476e9e',GradientType=0);
+      	background-color:#7892c2;
+      	-moz-border-radius:10px;
+      	-webkit-border-radius:10px;
+      	border-radius:10px;
+      	display:inline-block;
+      	cursor:pointer;
+      	color:#ffffff;
+      	font-family:Arial;
+      	font-size:15px;
+      	font-weight:bold;
+      	padding:10px 20px;
+      	text-decoration:none;
+      }
+
+      paper-button:hover {
+      	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #476e9e), color-stop(1, #7892c2));
+      	background:-moz-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+      	background:-webkit-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+      	background:-o-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+      	background:-ms-linear-gradient(top, #476e9e 5%, #7892c2 100%);
+      	background:linear-gradient(to bottom, #476e9e 5%, #7892c2 100%);
+      	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#476e9e', endColorstr='#7892c2',GradientType=0);
+      	background-color:#476e9e;
+      }
+      .myButton:active {
+      	position:relative;
+      	top:1px;
+      }
+
+
+    </style>
+
+      <paper-button raised class="custom indigo" id=“click-me” on-click="logIn">
+        <iron-icon icon="done"></iron-icon>Login</paper-button>
+      <paper-button raised class="custom indigo" id=“click-me” on-click="logOff">
+        <iron-icon icon="clear"></iron-icon>Logout</paper-button>
+
+  </template>
+
+  <script>
+      Polymer({
+        is: 'my-login',
+
+        logIn: function() {
+          console.log('here')
+          var lock = new Auth0Lock(
+            'uCxiKiGA49tLe3f9iXNsBp2XdzvBzImZ',
+            'zellwk.auth0.com'
+            )
+          lock.show(function (err, profile, token) {
+            if (err) {
+              console.error('Something went wrong: ', err)
+            } else {
+              // window.localStorage.removeItem('userToken');
+              // window.localStorage.removeItem('profile');
+              window.localStorage.setItem('userToken', token)
+              window.localStorage.setItem('profile', JSON.stringify(profile));
+              console.log('login =>', window.localStorage.getItem('userToken'));
+
+            }
+          });
+        },
+
+        logOff: function() {
+          console.log('logoff')
+          window.localStorage.removeItem('userToken');
+          window.localStorage.removeItem('profile');
+          window.location.reload();
+        },
+      });
+  </script>
+
+</dom-module>

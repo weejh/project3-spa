@@ -1,0 +1,123 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="my-chat-view.html">
+<link rel="import" href="my-chat-input.html">
+<script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+
+<!-- <link rel="import" href="my-chat-message.html"> -->
+<!-- <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script> -->
+
+<dom-module id="my-chat">
+  <template>
+    <!-- /*<style include="shared-styles"></style>*/ -->
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-material {
+        height: 50px;
+        width: auto;
+        border-radius: 10px 10px 10px 10px;
+        border: 0px ridge #f0f0f0;
+      }
+
+      paper-material:nth-child(odd) {
+        background: #eee;
+      }
+
+      #senderNtime {
+        color: red;
+        font-size: 10px;
+      }
+
+    </style>
+
+    <div id="container" layout vertical>
+        <template is="dom-repeat" items="{{listMessages}}">
+          <paper-material elevation="1">
+            <div id='messAge'><span>{{item.messDage}}</span></div>
+
+            <div id='senderNtime'>
+              sender: <span>{{item.userDname}}</span> |
+              time: <span>{{item.timeDstamp}}</span>
+            </div>
+
+          </paper-material>
+        </template>
+        <my-chat-input id="mychatinput"></my-chat-input>
+      </div>
+  </template>
+
+  <script>
+      Polymer({
+        is: 'my-chat',
+
+        properties: {
+          listMessages: {
+            type: Array,
+            notify: true,
+            value: function() { return []; }
+          }
+        },
+
+        ready: function () {
+          var self = this
+          if (window.localStorage.getItem('userToken')) {
+            console.log('login')
+          } else {
+            console.log('not login')
+          }
+
+          var socket = io.connect('http://ga-webchat.herokuapp.com/', {
+            'query': 'token=' + window.localStorage.getItem('userToken')
+          })
+
+          // var socket = io.connect('http://localhost:3000/', {
+          //   'query': 'token=' + window.localStorage.getItem('userToken')
+          // });
+
+          socket.on('chat log', function(messages){
+            messages.forEach(function(message, index){
+              if ((messages.length - index) < 11) {
+                self.push('listMessages',
+                  {
+                    messDage: message.message,
+                    timeDstamp: new Date(message.timestamp),
+                    userDname: message.username
+                  })
+              }
+            })
+          })
+
+          function sendMessage(event)  {
+            var timestamp = new Date()
+            var message = {
+             username: JSON.parse(window.localStorage.getItem('profile')).nickname,
+             message: event.detail.message,
+             timestamp: timestamp.toISOString()
+            }
+            socket.emit('chat message', message);
+            self.push('listMessages',
+              {
+                messDage: message.message,
+                timeDstamp: new Date(message.timestamp),
+                userDname: message.username
+              })
+            }
+
+          this.$.mychatinput.addEventListener('message', sendMessage);
+      }
+  })
+
+  </script>
+
+</dom-module>
