@@ -1,8 +1,8 @@
-node_modules
-dist
-bower_components
-docs
+dist/
+node_modules/
+bower_components/
+docs/
 .tmp
 .publish/
-.old
-backup
+*.old
+backup/
