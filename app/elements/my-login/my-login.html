@@ -73,9 +73,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         logIn: function() {
           console.log('here')
           var lock = new Auth0Lock(
-            'uCxiKiGA49tLe3f9iXNsBp2XdzvBzImZ',
-            'zellwk.auth0.com'
+            'NGW5BkUSyZSeAoPy0yC8RJMapLG4aXVT',
+            'weejh.auth0.com'
             )
+            var lock = new Auth0Lock(
+              'uCxiKiGA49tLe3f9iXNsBp2XdzvBzImZ',
+              'zellwk.auth0.com'
+              )
           lock.show(function (err, profile, token) {
             if (err) {
               console.error('Something went wrong: ', err)

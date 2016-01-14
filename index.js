@@ -1,9 +1,9 @@
+// const chalk = require('chalk')
 const express = require('express')
 const app = express()
-var http = require('http').Server(app)
+const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const socketioJwt = require('socketio-jwt')
-const PORT = process.env.PORT || 3000
 
 var root = __dirname + '/app'
 app.use('/', express.static(root))
@@ -16,15 +16,3 @@ io.use(socketioJwt.authorize({
   handshake: true
 })
 )
-
-http.listen(PORT, () => {
-  console.log(`Listening to http://localhost:${PORT}`)
-})
-
-// const app = require('./index')
-// const http = require('http').createServer(app)
-// const PORT = process.env.PORT || 3000
-//
-// http.listen(PORT, () => {
-//   console.log(`Listening to http://localhost:${PORT}`)
-// })
