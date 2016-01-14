@@ -47,11 +47,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         event.preventDefault();
       },
 
+      keyTyping: function () {
+        this.fire('typing', {typed: true})
+      },
+
       keyPressed: function (event) {
-          if (event.code === 'Enter') {
-            this.sendText()
-            event.preventDefault();
-          }
+        console.log('keyPressed =>', event);
+        this.keyTyping()
+        if (event.code === 'Enter') {
+          this.sendText()
+          event.preventDefault();
+        }
       },
     });
 
