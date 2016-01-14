@@ -20,14 +20,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
 
-      paper-material {
+      #messageList {
         height: 50px;
         width: auto;
         border-radius: 10px 10px 10px 10px;
         border: 0px ridge #f0f0f0;
       }
 
-      paper-material:nth-child(odd) {
+      #messageList:nth-child(odd) {
         background: #eee;
       }
 
@@ -39,11 +39,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       #userId {
         color: blue;
         font-size: 10px;
+        padding-top: 20px;
+      }
+      #container {
+        width: auto;
+         height: 50vh;
       }
 
     </style>
 
     <div id="container" layout vertical>
+      <div id="messagecontainer">
         <template is="dom-repeat" items="{{listMessages}}">
           <paper-material id='messageList' elevation="1">
             <div id='messAge'><span>{{item.messDage}}</span></div>
@@ -55,11 +61,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           </paper-material>
         </template>
+      </div>
+      <div id='boTtom'>
         <my-chat-input id="mychatinput"></my-chat-input>
         <div id='userId'>
-          <b>{{owner}}</b>
+          status: <b>{{staTus}}</b> | user: <b>{{userName}}</b>
         </div>
       </div>
+    </div>
 
   </template>
 
@@ -75,12 +84,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
+        created: function () {
+          console.log('my chat created function');
+          var socket = io.connect('https://ga-webchat.herokuapp.com/', {
+            'query': 'token=' + window.localStorage.getItem('userToken')
+          })
+
+          var self = this
+          socket.on('chat log', function(messages){
+            messages.forEach(function(message, index){
+              // console.log(message);
+              if ((messages.length - index) < 6) {
+                // console.log(message.message.slice(3, (message.message.length-4)))
+                self.push('listMessages',
+                  {
+                    messDage: message.message.slice(3, (message.message.length - 4)),
+                    timeDstamp: new Date(message.timestamp),
+                    userDname: message.username
+                  })
+                }
+              })
+            })
+        },
+
+        attached: function () {
+          console.log('my chat attached function');
+        },
+
+        detached: function() {
+          console.log('my chat detached function');
+        },
+
         ready: function () {
+          console.log('my chat ready function')
+
           var self = this
           if (window.localStorage.getItem('userToken')) {
-            console.log('login')
+            // console.log('login')
+            this.staTus = "online ... "
+            this.userName = JSON.parse(window.localStorage.getItem('profile')).nickname
           } else {
-            console.log('not login')
+            // console.log('not login')
+            this.staTus = "limkopi ... "
+            this.userName = 'guess who am i ...'
           }
 
           var socket = io.connect('https://ga-webchat.herokuapp.com/', {
@@ -91,37 +137,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //   'query': 'token=' + window.localStorage.getItem('userToken')
           // });
 
-          socket.on('chat log', function(messages){
-            messages.forEach(function(message, index){
-              // console.log(message);
-              if ((messages.length - index) < 20) {
-                // console.log(message.message.slice(3, (message.message.length-4)))
-                self.push('listMessages',
-                  {
-                    messDage: message.message.slice(3, (message.message.length - 4)),
-                    timeDstamp: new Date(message.timestamp),
-                    userDname: message.username
-                  })
-                }
-              })
 
-            })
-          // this.$.messageList.scrollIntoView()
-          // console.log('what is => ', this.$.messageList);
           function sendMessage(event)  {
             var timestamp = new Date()
             var message = {
-             username: JSON.parse(window.localStorage.getItem('profile')).nickname,
+             username: '',
              message: event.detail.message,
              timestamp: timestamp.toISOString()
             }
+
+            if (window.localStorage.getItem('profile')) message.username = JSON.parse(window.localStorage.getItem('profile')).nickname
+
             socket.emit('chat message', message);
-            // self.push('listMessages',
-            //   {
-            //     messDage: message.message,
-            //     timeDstamp: new Date(message.timestamp),
-            //     userDname: message.username
-            //   })
+
           }
 
           this.$.mychatinput.addEventListener('message', sendMessage);
@@ -135,29 +163,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 userDname: message.username
               })
             })
-
-    var self = this
-          socket.on('typing',function(status){
-              console.log(status.isTyping)
-              // setTimeout((self.owner = "typing... "), 200)
-
-              })
-          //
-          // if (window.localStorage.getItem('profile')) {
-          //   this.owner = JSON.parse(window.localStorage.getItem('profile')).nickname
-          // }
-          //
-          // var self = this
-
-          // function tyPing(event) {
-          //   console.log('typing')
-          //   self.owner = "typing ";
-          // socket.on('typing',function(status){
-          //   console.log(status)
-          //
-          //   })
-          // }
-
       }
   })
 
