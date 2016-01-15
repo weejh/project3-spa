@@ -67,6 +67,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <p class="paper-font-subhead">{{daTe}}</p>
+
       <paper-button raised class="custom indigo" id=“click-me” on-click="logIn">
         <iron-icon icon="work"></iron-icon> work</paper-button>
       <paper-button raised class="custom indigo" id=“click-me” on-click="logOff">
@@ -90,12 +92,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log('my login attached function');
           if (window.localStorage.getItem('userToken')) {
             // console.log('login')
-            this.staTus = "very hardworking now ... "
+            this.staTus = "working now ... "
             this.userName = JSON.parse(window.localStorage.getItem('profile')).nickname
           } else {
             // console.log('not login')
-            this.staTus = "limkopi time ... "
-            this.userName = 'who am i ...'
+            this.staTus = "kopi time ... "
+            this.userName = '@ kopitiam ...'
           }
         },
 
@@ -104,7 +106,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         ready: function () {
+          var self = this
           console.log('my login ready function')
+          upDate()
+          setInterval(upDate, 100)
+          function upDate () {
+            self.daTe = new Date()
+          }
+
         },
 
         logIn: function() {

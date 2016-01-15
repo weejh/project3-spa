@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="my-chat-input.html">
+<!-- <link rel="import" href="my-chat-view.html"> -->
 
 <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
 
@@ -49,28 +50,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div id="container" layout vertical>
+      <p class="paper-font-subhead">{{daTe}}</p>
+
       <div id="messagecontainer">
-        <template is="dom-repeat" items="{{listMessages}}">
-          <paper-material id='messageList' elevation="1">
-            <div id='messAge'><span>{{item.messDage}}</span></div>
+            <template is="dom-repeat" items="{{listMessages}}">
+              <paper-material id='messageList' elevation="1">
+                  <div id='messAge'>
+                    <span>{{item.messDage}}</span>
+                  </div>
+                  <div id='senderNtime'>
+                    sender: <span>{{item.userDname}}</span> |
+                    time: <span>{{item.timeDstamp}}</span>
+                  </div>
+            </paper-material>
+          </template>
+        </div>
 
-            <div id='senderNtime'>
-              sender: <span>{{item.userDname}}</span> |
-              time: <span>{{item.timeDstamp}}</span>
-            </div>
-
-          </paper-material>
-        </template>
-      </div>
       <div id='boTtom'>
         <my-chat-input id="mychatinput"></my-chat-input>
         <div id='userId'>
           status: <b>{{staTus}}</b> | user: <b>{{userName}}</b>
         </div>
       </div>
-    </div>
+  </div>
 
-  </template>
+
+    </template>
 
   <script>
       Polymer({
@@ -95,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             messages.forEach(function(message, index){
               // console.log(message);
               if ((messages.length - index) < 6) {
-                // console.log(message.message.slice(3, (message.message.length-4)))
+                console.log(message.message.slice(3, (message.message.length-4)))
                 self.push('listMessages',
                   {
                     messDage: message.message.slice(3, (message.message.length - 4)),
@@ -116,17 +121,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         ready: function () {
+          var self = this
+
           console.log('my chat ready function')
 
-          var self = this
+          upDate()
+          setInterval(upDate, 100)
+          function upDate () {
+            self.daTe = new Date()
+          }
+
           if (window.localStorage.getItem('userToken')) {
             // console.log('login')
-            this.staTus = "very hardworking now ... "
+            this.staTus = "working now ... "
             this.userName = JSON.parse(window.localStorage.getItem('profile')).nickname
           } else {
             // console.log('not login')
-            this.staTus = "limkopi time ... "
-            this.userName = 'guess who am i ...'
+            this.staTus = "kopi time ... "
+            this.userName = '@ kopitiam ...'
           }
 
           var socket = io.connect('https://ga-webchat.herokuapp.com/', {
@@ -153,15 +165,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           this.$.mychatinput.addEventListener('message', sendMessage);
-          // this.$.mychatinput.addEventListener('typing', tyPing);
 
           socket.on('chat message', function(message){
+
+            const messageListparent = self.$$('#messagecontainer')
+            Polymer.dom(messageListparent).removeChild(Polymer.dom(messageListparent).firstElementChild)
+
             self.push('listMessages',
               {
                 messDage: message.message.slice(3, (message.message.length-4)),
                 timeDstamp: new Date(message.timestamp),
                 userDname: message.username
               })
+
             })
       }
   })

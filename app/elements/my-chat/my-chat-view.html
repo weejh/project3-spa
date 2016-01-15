@@ -14,7 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="my-chat-view">
   <template>
   <style>
-    paper-shadow {
+    paper-material {
         margin: 5px;
         padding: 10px;
         float: left;
@@ -22,12 +22,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div vertical layout start>
-        <template is="dom-repeat" items="{{message in model}}">
-            <paper-material elevation="5">{{message}}</paper-material>
+        <template is="dom-repeat" items="{{listMessages}}">
+            <paper-material elevation="5">
+              <div id='messAge'>
+                <span>{{item.messDage}}</span>
+              </div>
+              <div id='senderNtime'>
+                sender: <span>{{item.userDname}}</span> |
+                time: <span>{{item.timeDstamp}}</span>
+              </div>
+            </paper-material>
         </template>
     </div>
-
-  </template>
 
   <script>
 
