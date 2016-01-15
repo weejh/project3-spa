@@ -100,10 +100,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             messages.forEach(function(message, index){
               // console.log(message);
               if ((messages.length - index) < 6) {
-                console.log(message.message.slice(3, (message.message.length-4)))
+                // console.log(message.message.slice(3, (message.message.length-4)))
+                const messageLength = 100
+                if (message.message.length < messageLength) {
+                  var messageDisplay = message.message.slice(3, (message.message.length-4))
+                } else {
+                  var messageDisplay = message.message.slice(3, messageLength).concat('...')
+                }
+
                 self.push('listMessages',
                   {
-                    messDage: message.message.slice(3, (message.message.length - 4)),
+                    messDage: messageDisplay,
                     timeDstamp: new Date(message.timestamp),
                     userDname: message.username
                   })
@@ -170,10 +177,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             const messageListparent = self.$$('#messagecontainer')
             Polymer.dom(messageListparent).removeChild(Polymer.dom(messageListparent).firstElementChild)
-
+            const messageLength = 100
+            if (message.message.length < messageLength) {
+              var messageDisplay = message.message.slice(3, (message.message.length-4))
+            } else {
+              var messageDisplay = message.message.slice(3, messageLength).concat('...')
+            }
+            console.log(message.message.length);
             self.push('listMessages',
               {
-                messDage: message.message.slice(3, (message.message.length-4)),
+                messDage: messageDisplay,
                 timeDstamp: new Date(message.timestamp),
                 userDname: message.username
               })
