@@ -8,4 +8,5 @@ URL of chat app =>  https://spachatapp.herokuapp.com/
 Issue/Todo List:
 * unit testing
 * joins chat room
-* auto scroll not responsive
+* list chat room
+* list available users
